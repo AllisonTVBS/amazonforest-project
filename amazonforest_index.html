@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【TVBS深度報導】亞馬遜：窒息與重生 | TVBS News</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.contentWindow.min.js"></script>
+
+    <style>
+        /* --- 1.全域設定 --- */
+        :root {
+            --brand-color: #003690;
+            --accent-color: #FFCC00;
+            --text-main: #333333;
+            --text-light: #ffffff;
+            --bg-color: #f4f4f4;
+            --border-color: #ddd;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+        /* --- 2.導覽列與進度條 --- */
+        #progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: transparent; z-index: 1000; }
+        #progress-bar { height: 100%; background: var(--brand-color); width: 0%; }
+        .nav-toggle { position: fixed; top: 20px; right: 20px; z-index: 1001; background: var(--brand-color); color: white; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: all 0.3s; }
+        .nav-menu { position: fixed; top: 60px; right: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1001; display: none; flex-direction: column; gap: 10px; }
+        .nav-menu.show { display: flex; }
+        .nav-menu a { text-decoration: none; color: var(--text-main); font-weight: 500; padding: 5px 10px; border-radius: 4px; transition: background 0.2s; }
+        .nav-menu a:hover { background: #eee; color: var(--brand-color); }
+
+        /* --- 3.首屏沈浸式 (Hero Section) --- */
+        .hero {
+            position: relative;
+            height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-light); overflow: hidden;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://github.com/AllisonTVBS/AllisonTVBS.github.io/blob/main/amazon%20forest-cover.jpg?raw=true');
+            background-size: cover; background-position: center;
+        }
+        .hero-content { position: relative; z-index: 1; padding: 20px; max-width: 800px; }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 20px; line-height: 1.2; }
+        .scroll-hint { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; font-size: 0.9rem; opacity: 0.8; padding: 10px; background: rgba(0, 0, 0, 0.5); color: #ffffff; border-radius: 5px; white-space: nowrap; z-index: 5; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translate(-50%, 0);} 40% {transform: translate(-50%, -10px);} 60% {transform: translate(-50%, -5px);} }
+
+        /* --- 4.滾動式敘事佈局 --- */
+        .main-container { position: relative; display: flex; flex-direction: column-reverse;background-color: var(--bg-color); }
+        .scrolly-content { width: 100%; z-index: 10; padding-bottom: 50px; background: transparent; }
+        .step { min-height: auto; padding: 40px 25px; display: flex; flex-direction: column; justify-content: center; opacity: 0.9; transition: opacity 0.5s; background: rgba(255,255,255, 0.95); margin-bottom: 60vh; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-bottom: none; margin-left: 15px; margin-right: 15px; position: relative; z-index: 10; }
+        .step:last-child { margin-bottom: 100px; }
+        .step.is-active { opacity: 1; }
+        .step h2 { font-size: 1.8rem; color: var(--brand-color); margin-bottom: 25px; border-left: 6px solid var(--accent-color); padding-left: 15px; line-height: 1.4; }
+        .step p { font-size: 1.1rem; margin-bottom: 20px; color: #333; text-align: justify; }
+        .scrolly-quote { border-left: 4px solid var(--accent-color); padding-left: 15px; font-style: italic; font-size: 1.15rem; color: #555; margin: 20px 0; }
+        .read-more-btn { display: inline-block; margin-top: 20px; padding: 10px 25px; border: 2px solid var(--brand-color); color: var(--brand-color); text-decoration: none; font-weight: 700; border-radius: 5px; transition: all 0.3s; align-self: flex-start; font-size: 1rem; }
+        .read-more-btn:hover { background: var(--brand-color); color: white; }
+        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; margin: 30px 0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .sticky-visual { position: -webkit-sticky; position: sticky; top: 0; width: 100%; height: 40vh; background: #000; overflow: hidden; z-index: 1; }
+        .visual-item { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .visual-item.is-active { opacity: 1; }
+        .visual-item img { width: 100%; height: 100%; object-fit: cover; }
+        .map-overlay { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 54, 144, 0.9); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.3); white-space: nowrap; }
+
+        /* --- 5.深度長文樣式 --- */
+        .article-section { background: var(--bg-color); padding: 80px 0; border-top: 10px solid var(--bg-color); margin-top: 0; position: relative; }
+        .article-section:nth-child(even) { background-color: #fafafa; }
+        .article-content { max-width: 800px; margin: 0 auto; padding: 0 15px; }
+        .article-header { margin-bottom: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;}
+        .article-header h2 { font-size: 2.2rem; color: #222; margin-bottom: 15px; line-height: 1.3; font-weight: 800; }
+        .article-subtitle { font-size: 1.2rem; color: #555; font-weight: normal; line-height: 1.6; }
+        .content-block { margin-bottom: 40px; }
+        .content-block h3 { font-size: 1.6rem; color: var(--brand-color); border-left: 5px solid var(--accent-color); padding-left: 15px; margin-top: 40px; margin-bottom: 25px; font-weight: 700; }
+        .content-block p { margin-bottom: 25px; text-align: justify; font-size: 1.1rem; color: #333; }
+        .photo-block { margin: 40px auto; text-align: center; max-width: 100%; }
+        .photo-block img { width: 100%; height: auto; border-radius: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #eee; display: block; margin: 0 auto; }
+        .photo-block figcaption { font-size: 0.95rem; color: #666; margin-top: 12px; font-style: italic; border-left: 3px solid #ccc; padding-left: 10px; text-align: left; }
+        .quote { background-color: #f0f4f8; border-left: 5px solid var(--brand-color); padding: 25px; font-size: 1.2rem; font-style: italic; color: #444; margin: 40px 0; border-radius: 0 5px 5px 0; line-height: 1.6; }
+        .quote strong { color: var(--brand-color); display: block; margin-bottom: 5px; font-style: normal; }
+        .info-box { background: #fdfdfd; padding: 25px; border-radius: 8px; margin: 40px 0; border: 1px solid #e0e0e0; border-top: 4px solid var(--accent-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .info-box h4 { color: var(--brand-color); margin-top: 0; font-size: 1.2rem; display: flex; align-items: center; }
+        .info-box h4::before { content: '💡'; margin-right: 10px; }
+        .info-box ul { padding-left: 20px; margin-bottom: 0; }
+        .info-box li { margin-bottom: 8px; font-size: 1rem; color: #555; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 50px 0; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .video-title { font-size: 1.1rem; font-weight: bold; color: #cc0000; margin-bottom: 15px; border-left: 4px solid #cc0000; padding-left: 10px; display: inline-block; }
+
+        @media (min-width: 900px) {
+            .hero-content h1 { font-size: 5rem; }
+            .main-container { flex-direction: row; }
+            .scrolly-content { width: 50%; padding-bottom: 50px; }
+            .step { background: transparent; border-bottom: none; padding: 120px 80px; min-height: 110vh; margin-bottom: 0; margin-left: 0; margin-right: 0; border-radius: 0; box-shadow: none; }
+            .step.is-active { background: rgba(255,255,255,0.85); box-shadow: 0 0 30px rgba(0,0,0,0.05); }
+            .sticky-visual { position: sticky; top: 0; width: 50%; height: 100vh; }
+        }
+        
+        .lead-paragraph { background-color: var(--bg-color); padding: 40px 0; border-bottom: 1px solid var(--border-color); }
+        .lead-paragraph .container { max-width: 800px; margin: 0 auto; text-align: center; }
+        .lead-paragraph p { font-size: 1.15rem; color: #333; line-height: 1.8; padding: 0 15px; }
+    </style>
+</head>
+<body>
+
+    <div id="progress-container"><div id="progress-bar"></div></div>
+    <div class="nav-toggle" onclick="toggleMenu()">☰ 目錄</div>
+    <div class="nav-menu" id="navMenu">
+        <a href="#hero" onclick="toggleMenu()">回到頂部</a>
+        <a href="#section-1" onclick="toggleMenu()">01.章節總覽</a>
+        <a href="#article-1" onclick="toggleMenu()">01.雨林真相</a>
+        <a href="#article-2" onclick="toggleMenu()">02.開發兩難</a>
+        <a href="#article-3" onclick="toggleMenu()">03.藍碳寶庫</a>
+        <a href="#article-4" onclick="toggleMenu()">04.危機轉機</a>
+        <a href="#article-5" onclick="toggleMenu()">05.共存經濟</a>
+        <a href="#article-6" onclick="toggleMenu()">06.貝倫翻身</a>
+    </div>
+
+<header class="hero" id="hero">
+    <div class="hero-content">
+        <span style="font-size: 1rem; letter-spacing: 5px; background: rgba(255, 204, 0, 0.9); color: #000; padding: 5px 10px; border-radius: 3px; font-weight: bold; margin-bottom: 15px; display: inline-block;">TVBS深度報導</span>
+        <h1>亞馬遜<br>窒息與重生</h1>
+        <p style="font-size: 1.5rem; letter-spacing: 2px; font-weight: 400;">前進地球之肺的生存最前線</p>
+    </div>
+</header>
+
+    <div class="scroll-hint-wrapper">
+        <div class="scroll-hint">▼ 向下滑動展開旅程</div>
+    </div>
+    
+    <section class="lead-paragraph">
+        <div class="container">
+            <p>
+                2024年，亞馬遜經歷了史上最嚴峻的考驗。從「煮沸」的河水到失控的野火，這片「地球之肺」正發出求救訊號。TVBS採訪團隊深入核心，帶您直擊這場關乎全人類命運的生存戰役。
+            </p>
+        </div>
+    </section>
+
+    <div class="main-container">
+        <div class="scrolly-content">
+            <section class="step" id="section-1" data-index="1">
+                <h2>01.雨林真相：高溫下的沉默</h2>
+                <p>亞馬遜的核心功能並非製造氧氣，而是全球最大的「水循環引擎」與「碳吸收器」。它透過蒸散作用形成<strong>「空中河流」</strong>，是調節南美洲氣候的關鍵。然而，極端氣候正讓這套系統失靈。</p>
+                <p>2023年乾旱期，亞馬遜Tefé湖水溫曾飆升至<strong>39°C</strong>，導致上百隻河豚集體「熱死」。除了氣候，船隻噪音也正驅趕魚蝦，瓦解傳統河岸社區的漁獵生計。在靠近城市的康布島上，我們目睹雨林退化，樹冠層稀疏、缺乏高大樹木。</p>
+                <p class="scrolly-quote">「如果森林退化與砍伐合計超過20%至25%，亞馬遜將跨入不可逆轉的『稀樹草原化臨界點』。」</p>
+                <div class="video-wrapper">
+    <iframe 
+        src="https://www.youtube.com/embed/01S5XqKCOuI" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+                <a href="#article-1" class="read-more-btn">閱讀完整報導 →</a>
+            </section>
+
+            <section class="step" id="section-2" data-index="2">
+                <h2>02.開發兩難：被切開的綠肺</h2>
+                <p>一條名為<strong>「自由大道」</strong>的公路工程全速推進，承諾將兩小時車程縮短至30分鐘。然而，這條公路像利刃般切開了貝倫環境保護區，導致嚴重的<strong>「棲地破碎化」</strong>。</p>
+                <p>位於當地的CETRAS救援中心，每年接收約400-500隻受害動物。其中包括因母海牛被誘捕而孤立無援的幼仔。開發的喧囂，讓動物們重返自然的道路充滿不確定性。</p>
+                <p class="scrolly-quote">「道路的開通往往會引發次生開發，如非法伐木、採礦，加劇環境犯罪。」</p>
+                <div class="video-wrapper">
+    <iframe 
+        src="https://www.youtube.com/embed/iCwWTSzoFL8" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+                <a href="#article-2" class="read-more-btn">閱讀完整報導 →</a>
+            </section>
+
+            <section class="step" id="section-3" data-index="3">
+                <h2>03.藍碳寶庫：水下的隱形殺手</h2>
+                <p>亞馬遜紅樹林是全球高效的<strong>「藍碳」</strong>儲存庫，儲碳效率是陸地森林的<strong>2-6倍</strong>。但這座千年碳庫正被<strong>汞汙染</strong>摧毀，光合作用下降30-50%。</p>
+                <p>同時，森林焚燒產生acid rain，部分河段pH值曾測得低至2，甚至驗出多種重金屬。最可怕的是，汞毒已透過食物鏈累積在當地孩童的胎盤和母乳中。</p>
+                <p class="scrolly-quote">「一旦破壞紅樹林，就等於釋放了累積數千年的碳，我們沒有下一個千年去重新吸收它。」</p>
+                <div class="video-wrapper">
+    <iframe 
+        src="https://www.youtube.com/embed/LSDPETjTDjU" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+                <a href="#article-3" class="read-more-btn">閱讀完整報導 →</a>
+            </section>
+
+             <section class="step" id="section-4" data-index="4">
+                <h2>04.危機轉機：火線上的守護者</h2>
+                <p>2024年巴西亞馬遜遭遇史上最嚴重的野火浩劫，燒毀<strong>6.8萬</strong>平方公里的雨林，近兩個台灣的面積。氣候變遷引發的乾旱加上人為縱火，形成致命的惡性循環，讓這片雨林陷入「窒息」危機。</p>
+                <p>面對這場各國束手無策的災難，巴西提出了一項金融解方——<strong>「熱帶森林永久基金(TFFF)」</strong>。這項目標募集<strong>1250億美元</strong>的基金，試圖用「利差獎勵護林」的資本力量，為森林保育提供一條長久的出路。</p>
+                <p class="scrolly-quote">「森林死了，水就生病了，我們也一起生病。」</p>
+                <div class="video-wrapper">
+    <iframe 
+        src="https://www.youtube.com/embed/hoorF-n9VQI" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+                <a href="#article-4" class="read-more-btn">閱讀完整報導 →</a>
+            </section>
+
+            <section class="step" id="section-5" data-index="5">
+                <h2>05.共存經濟：不砍樹的致富路</h2>
+                <p>巴西莓(Açaí)的全球年產值<strong>560億台幣</strong>。這種在原生雨林中生長的<strong>「林下經濟」</strong>模式，證明了活著的森林比砍伐種植大豆更有價值。</p>
+                <p>當地科學家正將生物多樣性轉化為生技產品，包括抗氧化物高達一般蜂蜜<strong>20-100倍</strong>的「超級蜂蜜」，並從土壤微生物中尋找具有抗生素潛力的<strong>「未來新藥」</strong>。</p>
+                <p class="scrolly-quote">「我們想證明的是：巴西莓蜂蜜非常適合在亞馬遜地區大規模推廣。」</p>
+                <div class="video-wrapper">
+    <iframe 
+        src="https://www.youtube.com/embed/PXRjGIAxgKM" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+                <a href="#article-5" class="read-more-btn">閱讀完整報導 →</a>
+            </section>
+
+            <section class="step" id="section-6" data-index="6">
+                <h2>06.貝倫翻身：COP30 的豪賭</h2>
+                <p>為迎接COP30，主辦城市貝倫投入超過<strong>420億台幣</strong>進行城市大改造。昔日被戲稱為「臭水溝」的運河，變身為現代化的Nova Doca親水公園，展現了城市轉型的決心。</p>
+                <p>然而，國際盛會也帶來了爭議：住宿費用飆漲至平時的<strong>15-20倍</strong>。</p>
+                <p class="scrolly-quote">帕拉州長巴爾巴略：「活的森林比被砍伐的森林更有價值。」</p>
+                <div class="video-wrapper">
+    <iframe 
+        src="https://www.youtube.com/embed/4-N6QLAK5H0" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+                <a href="#article-6" class="read-more-btn">閱讀完整報導 →</a>
+            </section>
+        </div>
+
+        <div class="sticky-visual">
+            <div class="visual-item is-active" id="visual-1"><img src="image/article1-main.jpg" alt="Truth"><div class="map-overlay">📍 巴西帕拉州康布島</div></div>
+            <div class="visual-item" id="visual-2"><img src="image/article2-main.jpg" alt="Dilemma"><div class="map-overlay">📍 自由大道工地現場</div></div>
+            <div class="visual-item" id="visual-3"><img src="image/article3-main.jpg" alt="Blue Carbon"><div class="map-overlay">📍 鷺鷥公園紅樹林保育區</div></div>
+            <div class="visual-item" id="visual-4"><img src="image/article4-main.jpg" alt="Fire"><div class="map-overlay">📍 2024亞馬遜大火</div></div>
+            <div class="visual-item" id="visual-5"><img src="image/article5-main.jpg" alt="Economy"><div class="map-overlay">📍 亞馬遜洪泛平原(Combu Island)</div></div>
+            <div class="visual-item" id="visual-6"><img src="image/article6-main.jpg" alt="City"><div class="map-overlay">📍 貝倫市Nova Doca親水公園</div></div>
+        </div>
+    </div>
+
+<section class="full-feature-video" style="background-color: #ffffff; padding: 80px 0; border-top: 10px solid var(--bg-color);">
+    <div class="article-content">
+        <div class="video-title" style="font-size: 1.5rem; margin-bottom: 20px;">📺 一小時完整專題：亞馬遜的最後呼救</div>
+        <p style="text-align: center; color: #666; font-size: 1rem; margin-top: 20px; line-height: 1.6;">
+            TVBS採訪團隊歷時數月，深入雨林核心最前線。<br>
+            透過一小時完整紀錄，帶您看見亞馬遜最真實的窒息與重生。
+        </p>
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/uSTYhB0fVzw" 
+                title="TVBS 亞馬遜深度報導 完整版" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</section>
+
+    <article id="article-1" class="article-section">
+        <div class="article-content">
+            <div class="article-header">
+                <span class="tag">第一章</span>
+                <h2>COP30前線直擊／亞馬遜的最後一口氣：從「地球之肺」到「沸騰的河」</h2>
+                <figure class="photo-block">
+                    <img src="image/article1-main.jpg" alt="Rainforest">
+                    <figcaption>亞馬遜是全球最大的熱帶雨林生態系，橫跨南美洲9個國家，面積550萬平方公里，相當於153個台灣。（圖／達志影像路透社）</figcaption>
+                </figure>
+                <p class="article-subtitle">當我們搭乘機動快艇穿越貝倫附近的瓜馬河（Rio Guamá）水域，引擎的轟鳴聲劃破了雨林的寧靜。這片被世人譽為「地球之肺」的綠色心臟，此刻正發出微弱的求救訊號。2023年的乾旱期，亞馬遜湖水溫度一度飆升至39°C，比正常值高出10°C，導致上百隻河豚在「煮沸」的湖水中集體死亡。這不僅是氣候變遷的單一事件，而是一場正在進行中的生態崩潰。我們深入當地，揭開亞馬遜正面臨的真實危機——從被誤解的造氧功能，到迫在眉睫的死寂。</p>
+            </div>
+
+            <div class="content-block">
+                <h3>打破迷思：它不是氧氣工廠，而是全球最大的「冷氣機」</h3>
+                <p>長久以來，教科書告訴我們亞馬遜是「地球之肺」，負責製造氧氣。然而，科學界早已修正了這個浪漫的想像。事實上，雨林光合作用產生的氧氣，幾乎與其自身呼吸作用、腐爛及土壤微生物消耗的氧氣相互抵銷，淨氧氣產出約等於零。真正提供地球大部分氧氣的，其實是海洋中的浮游植物。</p>
+                <p>那麼，亞馬遜真正的價值何在？它更像是一台巨大的「全球空調」與「水循環引擎」。亞馬遜雨林是全球最大的陸地碳匯，每年吸收數十億噸二氧化碳，將碳固定在樹體與土壤中。更關鍵的是其強大的「蒸散作用」——每一棵大樹就像一台巨型抽水機，每天將水蒸氣送回大氣，整個亞馬遜每天釋放約兩百億噸水蒸氣，形成肉眼看不見的<strong>「空中河流」</strong>（Flying Rivers）。這些水氣不僅滋潤了南美洲的農業，更調節著全球的降雨模式。一旦雨林消失，這套冷卻系統將徹底停擺。</p>
+                <figure class="photo-block">
+                    <img src="image/article1-1.jpg" alt="River System">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+                <div class="info-box">
+                    <h4>BOX：亞馬遜的<strong>「空中河流」</strong> (Flying Rivers)</h4>
+                    <ul>
+                        <li><strong>定義：</strong>亞馬遜雨林透過蒸散作用釋放的巨大水氣流。</li>
+                        <li><strong>規模：</strong>亞馬遜每天向大氣釋放約<strong>200億噸</strong>水蒸氣，這個水量甚至比亞馬遜河注入大西洋的每日水量（170億噸）還要大。</li>
+                        <li><strong>功能：</strong>將水氣輸送至巴西中南部、阿根廷等地，是南美洲農業與水力發電的命脈，同時影響全球風場與氣候調節。</li>
+                    </ul>
+                </div>
+
+                <h3>沸騰的水域：河豚熱死與乾旱的連鎖反應</h3>
+                <p>氣候變遷的衝擊在亞馬遜上游展現得最為殘酷。2023年，極端乾旱席捲而來，索利蒙斯河（Solimões River）與馬瑙斯（Manaus）周邊的水位降至歷史低點。Tefé湖的水溫因乾旱與高溫飆升至39°C，這對於耐熱上限僅約32-34°C的亞馬遜河豚來說，無異於地獄。</p>
+                <p>科學家解剖發現，這些河豚的肺和腦組織出現嚴重的熱壓力損傷。牠們被困在變淺、變熱的水域中，無處可逃，最終集體死亡。這場生態浩劫不僅帶走了珍貴的物種，更預示著水文系統的崩潰。暖化導致河道縮窄、魚類大量死亡，並加速病原體爆發，形成致命的組合拳。蘇黎世大學氣候政策學者 Axel Michaelowa 示警，氣候變遷的速度比預期更快，全球已突破1.5°C門檻，災難不再是未來式，而是現在進行式。</p>
+
+                <h3>人為的噪音：看不見的污染正在驅趕生靈</h3>
+                <p>除了氣候的巨變，人類活動的微小干擾也正在累積成巨大的壓力。在康布島（Combu）與穆魯圖島（Murutú）的傳統河岸社區，居民世代依賴捕魚維生。然而，當地導遊告訴我們，現在要捕到魚越來越難，原因不只是氣候，還有「噪音」。</p>
+                <p>隨著觀光與交通需求增加，河道上充斥著快速機動船的引擎聲。這些巨大噪音與水波擾動，迫使魚群與蝦群逃離棲息地。對於依賴聲納導航的河豚與魚類而言，這是一場持續的聽覺轟炸。一位居民無奈表示，雖然還能捕撈到自家食用的小蝦，但數量已不足以拿到城市販售。這種現代化的干擾，正在悄無聲息地瓦解傳統河岸社區的生計基礎。</p>
+                <figure class="photo-block">
+                    <img src="image/article1-2.jpg" alt="Local Community">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>毀林的推手：大豆、牧牛與逼近的臨界點</h3>
+                <p>走上陸地，原本遮天蔽日的雨林出現了巨大的傷疤。導遊坦言，保護完好的原始林越來越少，取而代之的是大片的次生林與光禿的紅土。毀滅雨林的兩大元兇依然是：大豆農場與牧牛場。為了追求更高的經濟收益，森林被砍伐、焚燒，轉變為農牧用地。</p>
+                <p>在退化區域，陽光直射地面，土壤變得乾燥、貧瘠，缺乏腐植層，非原生的臂形草大量入侵。雖然最新的研究發現，因二氧化碳濃度增加，亞馬遜樹木體型在十年內增加了3.2%，但這趕不上砍伐的速度。科學界發出嚴厲警告：一旦森林砍伐與退化面積超過20%至25%，亞馬遜將跨越不可逆的「臨界點」（Tipping Point），整片雨林將退化為乾燥的稀樹草原，屆時，全球氣候將面臨萬劫不復的災難。</p>
+
+                <div class="video-container">
+                    <div class="video-title">🎬 完整專題報導：雨林真相</div>
+                    <iframe src="https://www.youtube.com/embed/您的影片ID_1" title="YouTube video - 亞馬遜雨林真相" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+<div class="more-news-cta" style="text-align: center; margin-top: 40px; padding: 30px; background-color: #f9f9f9; border-radius: 8px;">
+    <p style="font-size: 1.1rem; color: #333; margin-bottom: 20px; font-weight: 500;">想看更多關於亞馬遜雨林真相的深入報導？</p>
+    <a href="https://news.tvbs.com.tw/" target="_blank" class="read-more-btn" style="align-self: center; float: none; display: inline-block; margin-top: 0;">點我觀看更多新聞 →</a>
+</div>
+    </article>
+
+    <article id="article-2" class="article-section">
+        <div class="article-content">
+            <div class="article-header">
+                <span class="tag">第二章</span>
+                <h2>被切開的綠肺／自由大道上的血色代價：一條縮短90分鐘的公路</h2>
+                <figure class="photo-block">
+                    <img src="image/article2-main.jpg" alt="Construction">
+                    <figcaption>貝倫「自由大道」工地現場如一條傷疤剃除原始森林。（圖／達志影像路透社）</figcaption>
+                </figure>
+                <p class="article-subtitle">在巴西帕拉州，一場關於「進步」與「生存」的博弈正在上演。一條名為「自由大道」的四線道高速公路工程全速推進中。它的藍圖很迷人：承諾將貝倫都會區往郊區原本兩小時的壅塞車程，縮短至僅僅30分鐘。然而，這條象徵自由與便捷的柏油路，卻像一把利刃，硬生生切開了貝倫環境保護區。對於人類，這是通勤的福音；對於棲息在此的珍稀動物，這是一條通往滅絕的死亡之路。</p>
+            </div>
+
+            <div class="content-block">
+                <h3>工地直擊：當森林變成紅土</h3>
+                <p>我們來到施工現場，空氣中瀰漫著令人窒息的柴油味與塵土。重型機具的轟隆聲響徹雲霄，地面微微震動。眼前原本茂密的原始森林消失了，取而代之的是一道綿延到天邊的光禿紅土帶。一邊是殘存的茂密林冠，另一邊則是連樹樁都已被剷除殆盡的荒地，在短短幾公尺間形成強烈而殘酷的對比。</p>
+                <p>儘管州政府與帕拉州長巴爾巴略（Helder Barbalho）強調這是一條「永續公路」，反駁美國總統川普的「醜聞」指控。根據官方資料，公路設計了24條野生動物廊道、單車道及太陽能照明。但現實是，道路對森林的影響是不可逆的。它導致了嚴重的<strong>「棲地破碎化」</strong>（Habitat fragmentation），原本完整的生態系被一分為二，阻斷了動物的遷徙路線，更縮小了牠們繁衍與覓食的空間。</p>
+                <figure class="photo-block">
+                    <img src="image/article2-2.jpg" alt="Habitat Fragmentation">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>CETRAS 救援中心：破碎棲地下的野戰醫院</h3>
+                <p>距離工地不遠處，位於亞馬遜聯邦農業大學（UFRA）校園內的野生動物篩選與復健中心（CETRAS），成為了這場開發戰役中的野戰醫院。這裡每年接收約400至500隻受傷動物，牠們多半是棲地破壞、非法交易或交通事故的受害者。</p>
+                <p>即便是在這個救命的地方，也能感受到開發的壓迫。高速公路工程就從校園一角穿過，施工噪音讓敏感的動物倍感壓力，獸醫甚至能感覺到牆壁在震動。更諷刺的是，道路施工直接導致中心失去了一部分的野放區域，讓動物重返自然的希望變得更加渺茫。</p>
+
+                <h3>無聲的受害者：海牛、倉鴞與被撞擊的靈魂</h3>
+                <p>在CETRAS，我們見證了開發代價的具體面貌。最令人揪心的是亞馬遜海牛（Amazonian Manatee）。這種被IUCN列為「易危」的溫柔巨獸，正面臨氣候變遷與獵捕的雙重威脅。一隻名為「賽爾吉尼奧」的幼仔，被發現時極度消瘦、身上帶有魚叉刺傷。由於獵人常利用幼仔的哭聲誘捕母海牛，許多像牠這樣的孤兒失去了母親，完全無法獨自生存，只能依賴中心長達兩年的人工餵養。</p>
+                <p>受害者不只海牛。我們看到一隻年輕的短尾鷹（Short-tailed Hawk），在學習飛行時撞上建築物或障礙物受傷，正透過獵鷹術進行復健。還有一隻倉鴞（Barn Owl），因為舊骨折癒合不良形成骨痂，永遠失去了飛行的能力。對於聽覺敏銳的倉鴞來說，鄰近工地的施工噪音簡直是精神折磨。而無助的水獺幼崽與美洲豹貓，往往因為母親遭遇船擊或車禍身亡，成為在路邊被發現的孤兒。</p>
+                <figure class="photo-block">
+                    <img src="image/article2-1.jpg" alt="Rescue Center">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <div class="info-box">
+                    <h4>BOX：亞馬遜海牛 (Amazonian Manatee) 小檔案</h4>
+                    <ul>
+                        <li><strong>學名：</strong>Trichechus inunguis</li>
+                        <li><strong>保育等級：</strong>IUCN 易危 (Vulnerable)</li>
+                        <li><strong>威脅：</strong>氣候變遷（水溫敏感）、殘酷獵捕（利用幼仔誘捕母海牛）。</li>
+                        <li><strong>救援難度：</strong>幼仔需人工餵養長達兩年，直到體重達70公斤才能嘗試野放。</li>
+                    </ul>
+                </div>
+
+                <h3>回不去的家：野放的兩難</h3>
+                <p>CETRAS 的終極目標是讓動物重返野外，但這條路充滿荊棘。許多動物因為傷殘或長期被人類飼養而「人化」，喪失了野外生存能力。曾有鳥類被野放後，因太親近人類而自己飛回中心。更令人擔憂的是，隨著自由大道的開通，野放區域縮小，路殺風險大幅增加。巴西每年約有4.75億隻野生動物死於路殺。在破碎的棲地中，這些被治癒的生命，未來仍充滿了未知與凶險。</p>
+                
+                <div class="video-container">
+                    <div class="video-title">🎬 完整專題報導：開發兩難</div>
+                    <iframe src="https://www.youtube.com/embed/您的影片ID_2" title="YouTube video - 開發兩難" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article id="article-3" class="article-section">
+        <div class="article-content">
+            <div class="article-header">
+                <span class="tag">第三章</span>
+                <h2>隱形殺手入侵／當「藍碳」變毒藥：亞馬遜紅樹林的汞污染危機</h2>
+                <figure class="photo-block">
+                    <img src="image/article3-main.jpg" alt="Mangrove">
+                    <figcaption>雨林濕地被視為藍碳寶庫，一旦遭破壞恐釋出累積千年的碳，加劇暖化。（圖／XXX）</figcaption>
+                </figure>
+                <p class="article-subtitle">當全球目光聚焦在亞馬遜雨林的砍伐時，另一場更隱密、更致命的危機正在水下蔓延。亞馬遜河口擁有全球第二大的紅樹林面積，這些沿海濕地被稱為<strong>「藍碳」</strong>，是地球對抗暖化的超級防線。然而，這座寶庫正在變成毒氣室。非法採金帶來的汞污染、氣候變遷引發的酸雨，正聯手摧毀紅樹林的根基，將這片守護地球的淨土，轉化為劇毒源頭。</p>
+            </div>
+
+            <div class="content-block">
+                <h3>比雨林更強大：封存千年的藍碳機制</h3>
+                <p>為什麼紅樹林如此重要？與陸地森林不同，紅樹林與海草床處於缺氧的土壤環境中。植物吸收的二氧化碳被鎖定在根系與沉積物裡，由於微生物分解速度極慢，這些碳可以被封存數百甚至數千年。這使得藍碳生態系成為單位面積下最密集的碳儲存庫。</p>
+                <p>然而，這個機制極其脆弱。一旦紅樹林被破壞或土壤受到干擾，積累千年的碳就會在短時間內氧化，釋放回大氣中。「一旦破壞紅樹林，就等於釋放了累積數千年的碳，我們沒有下一個千年去重新吸收它，」TNC全球總監Emily Landis鄭重警告後果。</p>
+                <figure class="photo-block">
+                    <img src="image/article3-2.jpg" alt="Blue Carbon Research">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>金色的誘惑，黑色的死亡：汞污染</h3>
+                <p>威脅藍碳的頭號敵人，是來自上游非法採金（Garimpo）的汞污染。研究發現，劇毒的「甲基汞」正在攻擊紅樹林的核心——根系與土壤。高濃度的汞會導致紅樹林光合作用下降30-50%，根部死亡率增加3-8倍，並使土壤的儲碳能力下降20-40%。這意味著，汞污染直接廢掉了紅樹林的武功，使其從吸碳神器變成了碳排放源。</p>
+                <figure class="photo-block">
+                    <img src="image/article3-1.jpg" alt="Acid River">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>致命的生物累積：從河水到胎盤</h3>
+                <p>汞污染的惡果最終回到了人類身上。汞無法被人體自然排出，具有可怕的「生物累積」特性。它透過食物鏈層層放大，最終濃縮在當地居民賴以為生的魚類體內。</p>
+                <p>Simone Pereira 教授的研究揭露了驚人的事實：汞已經以驚人的濃度累積在當地女性的胎盤、母乳以及孩子的體內。當孕婦攝入受污染的魚肉，或吸入含汞空氣，汞會穿過胎盤直接進入胎兒體內，造成永久性、不可逆的神經系統損害。這是一場無聲的公共衛生危機，整整一代的亞馬遜原住民與河岸居民，正在尚未出生前就已中毒。</p>
+
+                <h3>酸雨腐蝕：pH值2的死亡之河</h3>
+                <p>氣候變遷與工業污染還帶來了另一個殺手——酸雨。當森林大火產生的氣體（NOx, SO2）與工業排放物混合水氣後落下，會劇烈改變河水的酸鹼值。原本呈弱酸至中性的亞馬遜河水，在某些工業區附近（如 Barcarena），曾測得 pH 值低至2的極端酸性。</p>
+                <p>這種強酸水質會殺死水中的魚類與微生物，導致「整條河死亡」。酸水還會沖刷土壤中的養分流入河流，引發優養化與缺氧（Hypoxia），進一步窒息水下生命。從汞毒到酸雨，亞馬遜的水文系統正在崩潰，而這正是支撐整個<strong>「空中河流」</strong>氣候調節功能的基礎。</p>
+
+                <div class="video-container">
+                    <div class="video-title">🎬 完整專題報導：藍碳寶庫</div>
+                    <iframe src="https://www.youtube.com/embed/您的影片ID_3" title="YouTube video - 藍碳寶庫" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article id="article-4" class="article-section">
+        <div class="article-content">
+            <div class="article-header">
+                <span class="tag">第四章</span>
+                <h2>火線救援／2024野火創紀錄：亞馬遜需要的不只是錢，是正義</h2>
+                <figure class="photo-block">
+                    <img src="image/article4-main.jpg" alt="Forest Fire">
+                    <figcaption>2024年巴西嚴重野火季，燒毀兩個台灣面積的雨林。（圖／達志影像路透社）</figcaption>
+                </figure>
+                <p class="article-subtitle">2024年，亞馬遜的天空被煙霾籠罩。這一年巴西野火數量創下十年新高，全國燒毀30.8萬平方公里，相當於義大利國土面積。若只保守計算燒毀的亞馬遜雨林，也多達6.8萬平方公里，比前一年暴增6成，相當於在一年內，失去將近兩個台灣大的雨林面積。
+
+這不僅是聖嬰現象帶來的乾旱，更是人為開發與氣候變遷交織成的惡性循環。在這場生存戰役中，最前線的守護者：原住民族，正發出微弱卻堅定的呼救。</p>
+            </div>
+
+            <div class="content-block">
+                <h3>森林劣化：比砍伐更隱蔽的殺手</h3>
+                <p>我們常關注「森林砍伐」（Deforestation），也就是樹木被徹底清除。但 IPAM 執行董事 André Guimarães 提醒我們，還有一個更隱蔽的威脅：<strong>「森林劣化」</strong>（Degradation）。這包括選擇性伐木、樹冠破碎、邊緣效應等。劣化後的森林雖然看起來還像森林，稱之為森林卻已經喪失了保濕與調節溫度的功能。</p>
+                <p>這形成了一個死亡螺旋：被劣化的森林更乾燥、溫度更高（可飆升2-4°C），因此更容易發生野火；而野火又進一步導致森林劣化。目前亞馬遜約有40%的區域已經受到人類活動的改變。即使是自然恢復的次生林，其碳吸收能力與生物多樣性，在60-80年內都無法追上原生林。</p>
+                <figure class="photo-block">
+                    <img src="image/article4-1.jpg" alt="Forest Degradation">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>守護者的悲歌：沒有森林就沒有文化</h3>
+                <p>在這片燃燒的土地上，原住民族受傷最深。對於他們而言，森林不只是資源，是身分認同，是藥房，是神聖的祖靈地。「如果我們被迫到城市生活，98%的文化身份都會消失，」巴西知名的原住民權益捍衛者，同時也是Manchineri族領袖Elcio無比沉痛。</p>
+
+<p>森林退化直接衝擊了他們的生存：授粉者減少導致野果歉收，獵物因棲地破碎而難以尋覓，水源被汞污染毒害。更諷刺的是，儘管原住民族保護了全球80%的生物多樣性，但在全球氣候基金的分配中，他們卻只分到了不到1%。他們不僅要對抗大火，還要對抗制度的不公。</p>
+
+                <figure class="photo-block">
+                    <img src="image/article4-5.jpg" alt="Guardians">
+                    <figcaption>原住民站在對抗氣候變遷的第一線，卻是最缺乏資源的一群人。（圖／XXX）</figcaption>
+                </figure>
+
+                <h3>TFFF 基金：1250億美元的金融豪賭</h3>
+                <p>為了打破「保育無利可圖」的困境，巴西在 COP30 前夕提出了一項極具野心的金融工具——<strong>「熱帶森林永久基金」</strong>（Tropical Forests Forever Facility, TFFF）。這個計畫目標是向已開發國家與主權基金募集1250億美元的本金。</p>
+                <p>TFFF 的運作邏輯是「利差獎勵護林」：本金不直接消耗，而是投入低風險投資產生收益。這些收益將按「每公頃現存森林」支付給熱帶雨林國家，作為他們保護森林的「補助金」。這是一個去政治化、長期的資金流，解決了捐款不穩定性。巴西總統魯拉承諾，TFFF 的資金中至少有20%將直接分配給原住民族與在地社群。</p>
+
+                <div class="video-container">
+                    <div class="video-title">🎬 完整專題報導：危機轉機</div>
+                    <iframe src="https://www.youtube.com/embed/您的影片ID_4" title="YouTube video - 危機轉機" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article id="article-5" class="article-section">
+        <div class="article-content">
+            <div class="article-header">
+                <span class="tag">第五章</span>
+                <h2>不砍樹也能發大財／亞馬遜的紫色黃金：巴西莓與康普茶的生物經濟革命</h2>
+                <figure class="photo-block">
+                    <img src="image/article5-main.jpg" alt="Bioeconomy">
+                    <figcaption>被視為超級食物的巴西莓，採集方式不破壞雨林，提供保育的經濟誘因。（圖／XXX）</figcaption>
+                </figure>
+                <p class="article-subtitle">在亞馬遜，長久以來存在一個迷思：要發展經濟，就必須砍伐森林來種植大豆或放牧牛隻。然而，在帕拉州，一場靜悄悄的革命正在推翻這個舊觀念。這裡的人們發現，活著的森林比死掉的更有價值。從風靡全球的超級食物「巴西莓」（Açaí），到利用雨林微生物研發的未來新藥，一種名為「生物經濟」或<strong>「林下經濟」</strong>的模式正在崛起。</p>
+            </div>
+
+            <div class="content-block">
+                <h3>紫色奇蹟：巴西莓的林下經濟學</h3>
+                <p>走進貝倫的 Ver-o-Peso 市場，隨處可見一桶桶深紫色的漿果，這就是巴西莓。對當地人來說，它是搭配炸魚的主食；對全球健康市場來說，它是富含花青素的抗氧化聖品。巴西莓的價值在於它展示了<strong>「林下經濟」</strong>（Agroforestry）的潛力。不同於大豆需要將森林剃光，巴西莓生長在原生雨林中，在其他樹種的遮蔭下生長，每年可採收兩次，不需要大規模砍伐。每年巴西莓的全球市場價值達到560億台幣，這證明了，保護森林與經濟發展並非零和遊戲。</p>
+                <figure class="photo-block">
+                    <img src="image/article5-2.jpg" alt="Acai Power">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <div class="info-box">
+                    <h4>BOX：巴西莓 (Açaí) 營養價值</h4>
+                    <ul>
+                        <li><strong>抗氧化霸主：</strong>富含花青素，抗氧化能力是藍莓的<strong>10倍</strong>、紅酒的<strong>30倍</strong>。</li>
+                        <li><strong>健康油脂：</strong>富含 Omega-3, 6, 9，有助心血管健康。</li>
+                        <li><strong>低糖高纖：</strong>純果泥含糖量極低，適合生酮飲食與健身族群。</li>
+                    </ul>
+                </div>
+
+                <h3>超級蜂蜜與亞馬遜康普茶</h3>
+                <p>在 Guamá 科學與技術園區，科學家正在將巴西莓的價值進一步升級。帕拉州聯邦大學的 Nilton Akio Muto 博士開發出一種「巴西莓蜂蜜」。這種蜂蜜由巴西莓棕櫚樹的花蜜製成，抗氧化能力是一般蜂蜜的20到100倍。這不僅創造了高價值的產品，更鼓勵農民保護授粉的蜜蜂，促進生態多樣性。</p>
+
+<p>另一位創業者 Rodolfo Braz Homci 則利用生物科技，研發出史上第一款「亞馬遜康普茶」。他使用來自雨林的特殊細菌與酵母菌種進行發酵，並加入古布阿蘇（Cupuaçu）、巴西莓等在地水果。這款產品保留了康普茶的健康益處，更封存了亞馬遜獨有的風味，目前正準備要量產上市。</p>
+
+                <figure class="photo-block">
+                    <img src="image/article5-1.jpg" alt="Kombucha">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>未來藥局：腳底下的微生物寶藏</h3>
+                <p>除了食物，亞馬遜的土壤裡還藏著未來的救命藥。在實驗室裡，科學家從紅樹林和雨林保護區採集土壤樣本，利用高科技定序儀分析微生物DNA。</p>
+
+<p>研究員Ian Ariel指出，世界上99%的細菌尚未被研究，而亞馬遜的微生物多樣性遠超想像。他們正在尋找能生產新抗生素、具抗發炎甚至抗癌潛力的未知菌種，目前已找到有潛力的菌種。這項名為「Assai」的計畫證明了，亞馬遜是一座活體圖書館，只要我們不將它燒毀，它就能持續為人類提供解方。</p>
+                <figure class="photo-block">
+                    <img src="image/article5-4.jpg" alt="Microbes">
+                    <figcaption>從傳統採集到尖端生技，亞馬遜正在走出一條綠色致富路。（圖／XXX）</figcaption>
+                </figure>
+
+                <h3>生態旅遊：森林之母的召喚</h3>
+                <p>在康布島（Combu），「森林型可可」與生態旅遊結合，成為另一種守護模式。Dona Nena 經營的巧克力工坊「康布島之女」，堅持在森林樹蔭下種植可可，保留了百年老樹與原始林相。這裡有一棵超過280年的巨樹，被原住民視為<strong>「森林之母」</strong>。</p>
+
+<p>遊客來到這裡，不只是買巧克力，更是體驗與森林共呼吸的生活方式。雖然氣候變遷導致可可減產，但生態旅遊帶來的穩定收入，讓當地人更有底氣拒絕砍伐森林的誘惑。亞馬遜的未來，就藏在這些不砍樹也能致富的故事裡。</p>
+                
+                <div class="video-container">
+                    <div class="video-title">🎬 完整專題報導：共存經濟</div>
+                    <iframe src="https://www.youtube.com/embed/您的影片ID_5" title="YouTube video - 共存經濟" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article id="article-6" class="article-section">
+        <div class="article-content">
+            <div class="article-header">
+                <span class="tag">第六章</span>
+                <h2>COP30主辦城／420億台幣的豪賭：貝倫能從臭水溝變身亞馬遜首都？</h2>
+                <figure class="photo-block">
+                    <img src="image/article6-main.jpg" alt="Belem City">
+                    <figcaption>貝倫昔日貧民窟河流經過整建後，與老舊樓房形成強烈對比。（圖／XXX）</figcaption>
+                </figure>
+                <p class="article-subtitle">貝倫（Belém），這座位於亞馬遜河口的古老城市，曾因橡膠熱潮而擁有「亞馬遜巴黎」的美譽。然而，隨著聯合國氣候變化大會（COP30）即將在此登場，貝倫迎來了翻身的契機。巴西政府豪擲420億台幣進行城市大改造。這不僅是為了面子，更是一場試圖證明「亞馬遜能兼顧永續與繁榮」的巨大賭注。</p>
+            </div>
+
+            <div class="content-block">
+                <h3>Nova Doca：從富人排泄物到親水公園</h3>
+                <p>改造的核心亮點，是全新的Nova Doca親水公園。這條運河過去是城市污水的露天排放道，甚至被環境學者Simone Pereira戲稱為「有錢人的排泄溝渠」。如今，經過整治，這裡變成了長達1.2公里的現代化親水空間，配備了自行車道與綠地。</p>
+
+<p>居民José對此讚不絕口，認為這是城市的一大遺產，讓市民重新有了休閒的空間。然而，站在漂亮的公園邊，偶爾仍能聞到水溝散發出的異味，提醒著人們：貝倫的污水處理系統仍未完全解決。這場改造究竟是徹底的重生，還是只是表面的拉皮？</p>
+                <figure class="photo-block">
+                    <img src="image/article6-1.jpg" alt="Nova Doca Park">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>貧民窟的微光：圖昆杜巴河的變遷</h3>
+                <p>改變也發生在最貧困的角落。圖昆杜巴河（Tucunduba River）沿岸曾是貝倫最大的高腳屋貧民窟，居民生活在垃圾與污水之上。透過政府的基礎建設工程，這裡鋪設了道路、自來水與下水道。</p>
+<p>一位居住40年的居民感嘆，以前一下雨屋子就淹水，現在不僅街道變漂亮了，連治安也變好了。過去這裡靠黑幫「射穿小偷的手」來維持秩序，現在警察巡邏變多，居民終於感到安全。這些基礎建設的改善，或許是COP30留給貝倫最實質的禮物。</p>
+                <figure class="photo-block">
+                    <img src="image/article6-2.jpg" alt="Belem Infrastructure">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>代價高昂的盛宴：房價飆漲15倍</h3>
+                <p>然而，國際盛會的光環下，陰影隨之而來。隨著預計五萬名與會者湧入，貝倫的住宿供不應求。旅館價格瘋狂飆漲，甚至出現平時價格的15倍、20倍。許多房東為了賺取高額租金，趕走原有房客進行整修。</p>
+<p><這場「百萬致富夢」讓當地物價飛漲，甚至迫使一些財力不足的島國代表團縮短行程。有人質疑，這是巴西總統魯拉送給盟友、帕拉州長巴爾巴略的政治禮物，是為了競選鋪路的「政策買票」。巴爾巴略接受我們訪問時，堅決否認，強調這是為了確立貝倫作為「亞馬遜首都」的地位，並將氣候議題深植人心。/p>
+                <figure class="photo-block">
+                    <img src="image/article6-3.jpg" alt="Economic Cost">
+                    <figcaption>請在此輸入圖說文字（圖片來源／XXX）</figcaption>
+                </figure>
+
+                <h3>盛會之後：曇花一現還是永續遺產？</h3>
+                <p>COP30對貝倫而言，是一次千載難逢的機會。它讓這座被遺忘的雨林門戶重新被世界看見，讓市民感受到身為亞馬遜人的驕傲。但真正的考驗在會議結束後才開始。</p>
+<p>如果這些鉅額投資能轉化為長期的旅遊吸引力與基礎建設改善，貝倫或許能擺脫百年的衰退，成為綠色經濟的示範城市。反之，若這只是一場為期兩週的煙火秀，留下的將是更嚴重的貧富差距與蚊子館。誠如一位來自巴西南部遊客的建言：「只有真正利用好資源，才能為那些生活在亞馬遜、保衛亞馬遜的人帶來正面的結果。」</p>
+
+                <div class="video-container">
+                    <div class="video-title">🎬 完整專題報導：貝倫翻身</div>
+                    <iframe src="https://www.youtube.com/embed/您的影片ID_6" title="YouTube video - 貝倫翻身" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </article>
+    
+    <footer style="background-color: #1a1a1a; padding: 80px 20px; text-align: center; color: #ffffff; position: relative; z-index: 20;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+             <img src="https://raw.githubusercontent.com/AllisonTVBS/AllisonTVBS.github.io/main/TVBS%20logo-white.png" alt="TVBS Logo" style="height: 45px; margin-bottom: 25px;">
+             <h3 style="margin: 0 0 35px 0; color: #fff; font-weight: bold; font-size: 1.5rem; letter-spacing: 1px;">TVBS邀您一同正視雨林現況，守護地球綠肺</h3>
+            <div class="credits" style="margin-bottom: 15px; font-size: 1rem; color: #dddddd; line-height: 1.8;">製作人/記者：許岱軒　　攝影：朱光弘　　策展人：陳祖晴　　監製：王結玲</div>
+            <p class="copyright" style="font-size: 0.85rem; color: #888888; margin: 0 0 40px 0;">&copy; 2025 TVBS Media Inc. All Rights Reserved.</p>
+            <a href="#" style="display: inline-block; padding: 12px 35px; background-color: #FFCC00; color: #003690; text-decoration: none; border-radius: 50px; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">分享專題</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('navMenu');
+            menu.classList.toggle('show');
+        }
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (scrollTop / scrollHeight) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        });
+        const steps = document.querySelectorAll('.step');
+        const visuals = document.querySelectorAll('.visual-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    steps.forEach(s => s.classList.remove('is-active'));
+                    entry.target.classList.add('is-active');
+                    const index = entry.target.dataset.index;
+                    visuals.forEach(v => v.classList.remove('is-active'));
+                    const activeVisual = document.getElementById(`visual-${index}`);
+                    if(activeVisual) activeVisual.classList.add('is-active');
+                }
+            });
+        }, { threshold: 0.5 });
+        steps.forEach(step => observer.observe(step));
+    </script>
+</body>
+</html>
