@@ -276,8 +276,7 @@
             <iframe src="https://www.youtube.com/embed/uSTYhB0fVzw" frameborder="0" allowfullscreen></iframe>
         </div>
          <div class="scroll-down-hint" style="text-align: center; margin-top: 60px; color: #003690; font-weight: bold; display: flex; flex-direction: column; align-items: center; width: 100%;">
-    <p style="font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 10px; width: 100%;">下滑閱讀完整專題</p>
-    <div style="font-size: 1.5rem; animation: bounce 2s infinite; width: 100%; display: block;">▼</div>
+    <p style="font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 10px; width: 100%;">下滑閱讀完整專題▼</p>
 </div>
 </section>
 
@@ -655,7 +654,7 @@
 </a>
         </div>
     </footer>
-
+<div id="custom-toast" style="visibility: hidden; opacity: 0; min-width: 250px; background-color: rgba(0, 0, 0, 0.8); color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: 50px; transform: translateX(-50%); transition: opacity 0.5s, visibility 0.5s; font-weight: 500;"></div>
     <script>
         function toggleMenu() {
             const menu = document.getElementById('navMenu');
@@ -664,8 +663,9 @@
         function copyCurrentUrl(event) {
     event.preventDefault();
     const currentUrl = window.location.href;
+
     navigator.clipboard.writeText(currentUrl).then(function() {
-        alert('專題網址已複製到剪貼簿，歡迎分享！');
+        showToast('專題網址已複製，歡迎分享！');
     }, function(err) {
         const textArea = document.createElement("textarea");
         textArea.value = currentUrl;
@@ -673,8 +673,21 @@
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        alert('網址已成功複製！');
+        showToast('網址已複製！');
     });
+}
+
+function showToast(message) {
+    const toast = document.getElementById("custom-toast");
+    toast.textContent = message;
+    toast.style.visibility = "visible";
+    toast.style.opacity = "1";
+    
+    // 2.5秒後自動隱藏
+    setTimeout(function() {
+        toast.style.visibility = "hidden";
+        toast.style.opacity = "0";
+    }, 2500);
 }
         window.addEventListener('scroll', () => {
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
