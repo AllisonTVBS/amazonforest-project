@@ -662,18 +662,18 @@
         }
         function copyCurrentUrl(event) {
     event.preventDefault();
-    const currentUrl = window.location.href;
+    const targetUrl = 'https://topic.tvbs.events/amazonforest-cop30-38167';
 
-    navigator.clipboard.writeText(currentUrl).then(function() {
+    navigator.clipboard.writeText(targetUrl).then(function() {
         showToast('專題網址已複製，歡迎分享！');
     }, function(err) {
         const textArea = document.createElement("textarea");
-        textArea.value = currentUrl;
+        textArea.value = targetUrl;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        showToast('網址已複製！');
+        showToast('網址已成功複製！');
     });
 }
 
