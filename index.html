@@ -275,10 +275,9 @@
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/uSTYhB0fVzw" frameborder="0" allowfullscreen></iframe>
         </div>
-         <div class="scroll-down-hint" style="text-align: center; margin-top: 60px; color: #003690; font-weight: bold;">
-            <p style="font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 10px;">下滑閱讀完整專題</p>
-            <div style="font-size: 1.5rem; animation: bounce 2s infinite;">▼</div>
-    </div>
+         <div class="scroll-down-hint" style="text-align: center; margin-top: 60px; color: #003690; font-weight: bold; display: flex; flex-direction: column; align-items: center; width: 100%;">
+    <p style="font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 10px; width: 100%;">下滑閱讀完整專題</p>
+    <div style="font-size: 1.5rem; animation: bounce 2s infinite; width: 100%; display: block;">▼</div>
 </div>
 </section>
 
@@ -647,7 +646,13 @@
              <h3 style="margin: 0 0 35px 0; color: #fff; font-weight: bold; font-size: 1.5rem; letter-spacing: 1px;">TVBS邀您一同正視雨林現況，守護地球綠肺</h3>
             <div class="credits" style="margin-bottom: 15px; font-size: 1rem; color: #dddddd; line-height: 1.8;">製作人/記者：許岱軒　　攝影：朱光弘　　策展人：陳祖晴　　監製：王結玲</div>
             <p class="copyright" style="font-size: 0.85rem; color: #888888; margin: 0 0 40px 0;">&copy; 2025 TVBS Media Inc. All Rights Reserved.</p>
-            <a href="#" style="display: inline-block; padding: 12px 35px; background-color: #FFCC00; color: #003690; text-decoration: none; border-radius: 50px; font-weight: bold; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">分享專題</a>
+            <a href="javascript:void(0);"
+   onclick="copyCurrentUrl(event)"
+   style="display: inline-block; padding: 12px 35px; background-color: #FFCC00; color: #003690; text-decoration: none; border-radius: 50px; font-weight: bold; transition: transform 0.2s;"
+   onmouseover="this.style.transform='scale(1.05)'"
+   onmouseout="this.style.transform='scale(1)'">
+   分享專題
+</a>
         </div>
     </footer>
 
@@ -656,6 +661,21 @@
             const menu = document.getElementById('navMenu');
             menu.classList.toggle('show');
         }
+        function copyCurrentUrl(event) {
+    event.preventDefault();
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl).then(function() {
+        alert('專題網址已複製到剪貼簿，歡迎分享！');
+    }, function(err) {
+        const textArea = document.createElement("textarea");
+        textArea.value = currentUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('網址已成功複製！');
+    });
+}
         window.addEventListener('scroll', () => {
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
