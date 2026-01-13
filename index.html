@@ -42,11 +42,18 @@
 
         /* --- 3.首屏沈浸式 (Hero Section) --- */
         .hero {
-            position: relative;
-            height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-light); overflow: hidden;
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://github.com/AllisonTVBS/AllisonTVBS.github.io/blob/main/amazon%20forest-cover.jpg?raw=true');
-            background-size: cover; background-position: center;
-        }
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-light);
+    overflow: hidden;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('images/amazon forest-cover.webp');
+    background-size: cover;
+    background-position: center;
+}
         .hero-content { position: relative; z-index: 1; padding: 20px; max-width: 800px; }
         .hero-content h1 { font-size: 3.5rem; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 20px; line-height: 1.2; }
         .scroll-hint { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; font-size: 0.9rem; opacity: 0.8; padding: 10px; background: rgba(0, 0, 0, 0.5); color: #ffffff; border-radius: 5px; white-space: nowrap; z-index: 5; }
